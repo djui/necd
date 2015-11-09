@@ -7,12 +7,15 @@ import (
 	"time"
 
 	"github.com/ian-kent/go-log/layout"
+	"github.com/ian-kent/go-log/levels"
 	"github.com/ian-kent/go-log/log"
 )
 
 func init() {
 	//log.SetFlags(0)
-	log.Logger().Appender().SetLayout(layout.Pattern("%p: %m"))
+	logger := log.Logger()
+	logger.Appender().SetLayout(layout.Pattern("%p: %m"))
+	logger.SetLevel(levels.INFO)
 }
 
 func main() {
