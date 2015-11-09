@@ -7,6 +7,15 @@ import (
 	"github.com/ian-kent/go-log/log"
 )
 
+func Contains(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
+
 func KeepAlive(f func()) {
 	go f()
 	c := make(chan os.Signal, 1)
