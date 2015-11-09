@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	//log.SetFlags()
+	//log.SetFlags(0)
 	log.Logger().Appender().SetLayout(layout.Pattern("%p: %m"))
 }
 
