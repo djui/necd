@@ -27,6 +27,17 @@ func runLoop() {
 
 	for name := range notifyOnChange(nif) {
 		log.Info("Network changed: %s", name)
+
+		// TODO: Use config for these configuration settings
+		switch name {
+		case "Wall-E":
+			SetVolume(0.5)
+			SetBrightness(0.5)
+
+		case "ScraperWiki":
+			SetVolume(0.1)
+			SetBrightness(0)
+		}
 	}
 }
 
