@@ -10,11 +10,7 @@ import (
 )
 
 func readConf() (ini.File, error) {
-	confPath, err := confPath()
-	if err != nil {
-		return nil, err
-	}
-
+	confPath := confPath()
 	conf, err := ini.LoadFile(confPath)
 	if os.IsNotExist(err) {
 		if err := ioutil.WriteFile(confPath, []byte{}, 0644); err != nil {
@@ -30,22 +26,29 @@ func readConf() (ini.File, error) {
 	return conf, nil
 }
 
-func writeConf(conf string) error {
-	confPath, err := confPath()
-	if err != nil {
-		return err
+func confPath() string {
+	// .
+	confPath := ".necdrc"
+	if _, err := os.Stat(confPath); err == nil {
+		return confPath
 	}
 
-	err = ioutil.WriteFile(confPath, []byte(conf), 0644)
-	return err
-}
+	// CWD
+	wDir, err := os.Getwd()
+	if err == nil {
+		confPath := path.Join(wDir, ".necdrc")
+		if _, err := os.Stat(confPath); err == nil {
+			return confPath
+		}
+	}
 
-func confPath() (string, error) {
+	// $HOME
 	usr, err := user.Current()
-	if err != nil {
-		return "", err
+	if err == nil {
+		confPath := path.Join(usr.HomeDir, ".necdrc")
+		return confPath
 	}
 
-	confPath := path.Join(usr.HomeDir, ".necdrc")
-	return confPath, nil
+	// Fallback
+	return ""
 }
