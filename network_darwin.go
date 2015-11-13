@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
-
-	"github.com/ian-kent/go-log/log"
 )
 
 // CurrentWifiName returns the SSID of the wifi network.
@@ -30,7 +28,6 @@ func CurrentWifiName(nif string) string {
 	}
 
 	name := wifiName(nif)
-	log.Debug(name)
 	return name
 }
 
