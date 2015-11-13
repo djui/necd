@@ -76,11 +76,14 @@ int main(int argc, char *const argv[]) {
 
   for (CGDisplayCount i = 0; i < numDisplays; ++i) {
     CGDirectDisplayID displayID = display[i];
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     CFDictionaryRef originalMode = CGDisplayCurrentMode(displayID);
     if (originalMode == NULL)
       continue;
 
     io_service_t service = CGDisplayIOServicePort(displayID);
+    #pragma GCC diagnostic pop
     switch (action) {
       case ACTION_SET_ONE:
         if ((CGDirectDisplayID)displayToSet != displayID && displayToSet != i)
