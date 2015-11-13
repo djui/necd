@@ -20,23 +20,19 @@ func main() {
 }
 
 func runLoop() {
-	_, err := readConf()
+	conf, err := readConf()
 	AssertNoErr(err, "Failed to read config file")
+
+	log.Info("Global conf: %#v", conf)
 
 	nif := "en0"
 
 	for name := range notifyOnChange(nif) {
 		log.Info("Network changed: %s", name)
 
-		// TODO: Use config for these configuration settings
-		switch name {
-		case "Wall-E":
-			SetVolume(0.5)
-			SetBrightness(0.5)
-
-		case "ScraperWiki":
-			SetVolume(0.1)
-			SetBrightness(0)
+		if section, ok := conf[name]; ok {
+			log.Debug("Found section: %v", section)
+			ApplyCmds(section)
 		}
 	}
 }
@@ -49,7 +45,7 @@ func notifyOnChange(nif string) <-chan (string) {
 	go func() {
 		for _ = range time.Tick(5 * time.Second) {
 			currentName := CurrentWifiName(nif)
-			log.Debug(currentName)
+			log.Debug("Current name: %s", currentName)
 			if previousName != currentName {
 				previousName = currentName
 				c <- currentName
