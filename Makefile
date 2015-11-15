@@ -2,7 +2,7 @@ VERSION?=$(shell git describe --tags --always --dirty)
 
 all: build
 
-build: brightness
+build:
 	go build -ldflags "-X main.version=$(VERSION)"
 
 install: build
@@ -18,7 +18,3 @@ dist/necd_linux_amd64:
 
 rel: dist
 	hub release create -a dist $(VERSION)
-
-
-brightness:
-	gcc -std=c99 -o brightness c/brightness.c -framework IOKit -framework ApplicationServices

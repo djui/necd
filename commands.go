@@ -42,13 +42,6 @@ func SetVolume(vNorm float64) {
 
 // SetBrightness takes a float value betweem [0,1] and sets the global screen brightness.
 func SetBrightness(vNorm float64) {
-	//v := vNorm
-	//log.Debug("Setting brightness to %v (%v)", vNorm, v)
-	//
-	//cmd := []string{"brightness", fmt.Sprintf("%f", vNorm)}
-	//out, err := exec.Command(cmd[0], cmd[1:]...).CombinedOutput()
-	//AssertNoErr(err, fmt.Sprintf("Failed execute cmd: %v: %s", cmd, string(out)))
-
 	v := int(16 * vNorm)
 	log.Debug("Setting brightness to %v (%v)", vNorm, v)
 
