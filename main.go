@@ -1,13 +1,15 @@
 package main
 
 import (
-	"os"
 	"time"
 
+	"github.com/codegangsta/cli"
 	"github.com/ian-kent/go-log/layout"
 	"github.com/ian-kent/go-log/levels"
 	"github.com/ian-kent/go-log/log"
 )
+
+var version string
 
 func init() {
 	//log.SetFlags(0)
@@ -17,7 +19,25 @@ func init() {
 }
 
 func main() {
-	if len(os.Args) >= 2 && os.Args[1] == "-d" {
+	app := cli.NewApp()
+	app.Name = "necd"
+	app.Usage = "Network Environment Change Detector"
+	app.Version = version
+	app.Action = actionMain
+
+	app.Flags = []cli.Flag{
+		cli.BoolFlag{
+			Name:   "daemon, d",
+			EnvVar: "DAEMON",
+			Usage:  "Daemonize",
+		},
+	}
+
+	app.RunAndExitOnError()
+}
+
+func actionMain(c *cli.Context) {
+	if c.Bool("daemon") {
 		if err := Daemonize("necd"); err != nil {
 			log.Fatal("Failed to daemonize: %v", err)
 		}
