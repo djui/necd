@@ -39,7 +39,7 @@ func main() {
 func actionMain(c *cli.Context) {
 	if c.Bool("daemon") {
 		if err := Daemonize("necd"); err != nil {
-			log.Fatal("Failed to daemonize: %v", err)
+			log.Fatalf("Failed to daemonize: %v", err)
 		}
 	} else {
 		KeepAlive(runLoop)
