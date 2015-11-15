@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// CurrentWifiName returns the SSID of the wifi network.
+// NetworkName returns the SSID of the wifi network.
 //
 // Many other options exist, like `airport` or
 // `networksetup -getinfo Wi-Fi`.
@@ -18,7 +18,7 @@ import (
 //     the correct network interface name.
 //   - Check if the network interface is active, otherwise try to find
 //     another one.
-func CurrentWifiName(nif string) string {
+func NetworkName(nif string) string {
 	if !nifExists(nif) {
 		return ""
 	}

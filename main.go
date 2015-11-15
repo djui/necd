@@ -65,13 +65,13 @@ func runLoop() {
 }
 
 func notifyOnChange(nif string) <-chan (string) {
-	previousName := CurrentWifiName(nif)
+	previousName := NetworkName(nif)
 	c := make(chan string, 1)
 	c <- previousName
 
 	go func() {
 		for _ = range time.Tick(5 * time.Second) {
-			currentName := CurrentWifiName(nif)
+			currentName := NetworkName(nif)
 			log.Debug("Current name: %s", currentName)
 			if previousName != currentName {
 				previousName = currentName
