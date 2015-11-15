@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"time"
 
 	"github.com/ian-kent/go-log/layout"
@@ -16,7 +17,13 @@ func init() {
 }
 
 func main() {
-	KeepAlive(runLoop)
+	if len(os.Args) >= 2 && os.Args[1] == "-d" {
+		if err := Daemonize("necd"); err != nil {
+			log.Fatal("Failed to daemonize: %v", err)
+		}
+	} else {
+		KeepAlive(runLoop)
+	}
 }
 
 func runLoop() {

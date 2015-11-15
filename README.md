@@ -1,4 +1,4 @@
-# necd - Network Environment Change Daemon
+# necd - Network Environment Change Detector
 
 Detects and notifies onn changes in network environment.
 
@@ -6,7 +6,7 @@ Detects and notifies onn changes in network environment.
 ## Usage
 
     $ go install github.com/djui/necd
-    $ necd
+    $ necd -d
 
 
 ## Limitations
