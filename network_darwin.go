@@ -32,7 +32,7 @@ func CurrentWifiName(nif string) string {
 }
 
 func nifExists(nif string) bool {
-	cmd := []string{"ifconfig", "-l"}
+	cmd := []string{"/sbin/ifconfig", "-l"}
 	out, err := exec.Command(cmd[0], cmd[1:]...).Output()
 	AssertNoErr(err, "Failed to list network interfaces")
 	nifs := strings.Fields(string(out))
@@ -40,7 +40,7 @@ func nifExists(nif string) bool {
 }
 
 func nifStatus(nif string) string {
-	cmd := []string{"ifconfig", nif}
+	cmd := []string{"/sbin/ifconfig", nif}
 	out, err := exec.Command(cmd[0], cmd[1:]...).Output()
 	AssertNoErr(err, "Failed to obtain network interface status")
 	lines := strings.Split(string(out), "\n")
@@ -55,7 +55,7 @@ func nifStatus(nif string) string {
 }
 
 func wifiName(nif string) string {
-	cmd := []string{"networksetup", "-getairportnetwork", nif}
+	cmd := []string{"/usr/sbin/networksetup", "-getairportnetwork", nif}
 	out, err := exec.Command(cmd[0], cmd[1:]...).Output()
 	AssertNoErr(err, "Failed to obtain airport network")
 	parts := strings.Fields(string(out))
