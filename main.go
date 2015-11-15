@@ -52,7 +52,7 @@ func runLoop() {
 
 	log.Info("Global conf: %#v", conf)
 
-	nif := "en0"
+	nif := conf["config"]["if"]
 
 	for name := range notifyOnChange(nif) {
 		log.Info("Network changed: %s", name)
