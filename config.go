@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/user"
-	"path"
+	"path/filepath"
 
 	"github.com/vaughan0/go-ini"
 )
@@ -36,7 +36,7 @@ func confPath() string {
 	// CWD
 	wDir, err := os.Getwd()
 	if err == nil {
-		confPath := path.Join(wDir, ".necdrc")
+		confPath := filepath.Join(wDir, ".necdrc")
 		if _, err := os.Stat(confPath); err == nil {
 			return confPath
 		}
@@ -45,7 +45,7 @@ func confPath() string {
 	// $HOME
 	usr, err := user.Current()
 	if err == nil {
-		confPath := path.Join(usr.HomeDir, ".necdrc")
+		confPath := filepath.Join(usr.HomeDir, ".necdrc")
 		return confPath
 	}
 
