@@ -56,7 +56,7 @@ func runLoop() {
 	for name := range notifyOnChange(nif) {
 		log.Info("Network changed: %s", name)
 
-		if section, ok := conf[name]; ok {
+		if section, ok := conf["ssid:"+name]; ok {
 			log.Debug("Found section: %v", section)
 			ApplyCmds(section)
 		}
