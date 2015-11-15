@@ -49,8 +49,7 @@ func actionMain(c *cli.Context) {
 func runLoop() {
 	conf, err := readConf()
 	AssertNoErr(err, "Failed to read config file")
-
-	log.Info("Global conf: %#v", conf)
+	log.Debug("Global conf: %#v", conf)
 
 	nif := conf["config"]["if"]
 
