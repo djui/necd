@@ -12,7 +12,6 @@ import (
 var version string
 
 func init() {
-	//log.SetFlags(0)
 	logger := log.Logger()
 	logger.Appender().SetLayout(layout.Pattern("%p: %m"))
 	logger.SetLevel(levels.DEBUG)
