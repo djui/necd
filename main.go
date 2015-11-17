@@ -59,6 +59,8 @@ func runLoop() {
 		if section, ok := conf["ssid:"+name]; ok {
 			log.Debug("Found section: %v", section)
 			ApplyCmds(section)
+		} else {
+			log.Debug("Undefined section for: %s", name)
 		}
 	}
 }
