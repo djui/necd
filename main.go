@@ -1,7 +1,10 @@
 package main
 
 import (
+	"os"
 	"time"
+
+	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/codegangsta/cli"
 	"github.com/ian-kent/go-log/layout"
@@ -13,7 +16,11 @@ var version string
 
 func init() {
 	logger := log.Logger()
-	logger.Appender().SetLayout(layout.Pattern("%p: %m"))
+	if terminal.IsTerminal(int(os.Stdout.Fd())) {
+		logger.Appender().SetLayout(layout.Pattern("%p: %m"))
+	} else {
+		logger.Appender().SetLayout(layout.Pattern("%d %p: %m"))
+	}
 	logger.SetLevel(levels.DEBUG)
 }
 
