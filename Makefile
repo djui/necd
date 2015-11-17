@@ -8,13 +8,13 @@ build:
 install: build
 	go install -ldflags "-X main.version=$(VERSION)"
 
-dist: dist/necd_darwin_amd64 dist/necd_linux_amd64
+dist: dist/necd_darwin_amd64 #dist/necd_linux_amd64
 
 dist/necd_darwin_amd64:
 	GOOS=darwin GOARCH=amd64 go build -o dist/necd_darwin_amd64 -ldflags "-X main.version=$(VERSION)"
 
-dist/necd_linux_amd64:
-	GOOS=linux GOARCH=amd64 go build -o dist/necd_linux_amd64 -ldflags "-X main.version=$(VERSION)"
+#dist/necd_linux_amd64:
+#	GOOS=linux GOARCH=amd64 go build -o dist/necd_linux_amd64 -ldflags "-X main.version=$(VERSION)"
 
 rel: dist
 	hub release create -a dist $(VERSION)
