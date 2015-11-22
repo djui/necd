@@ -3,63 +3,45 @@ package main
 import (
 	"fmt"
 	"os/exec"
+	"regexp"
 	"strings"
+
+	"github.com/ian-kent/go-log/log"
 )
 
 // NetworkName returns the SSID of the wifi network.
-//
-// Many other options exist, like `airport` or
-// `networksetup -getinfo Wi-Fi`.
-//
-// Things to improve are:
-//
-//   - Run `networksetup -listallhardwareports` or
-//     `networksetup -listnetworkserviceorder` first to ensure we got
-//     the correct network interface name.
-//   - Check if the network interface is active, otherwise try to find
-//     another one.
 func NetworkName(nif string) string {
-	if !nifExists(nif) {
+	ns := new(networksetup)
+	if !ns.getAirportPower(nif) {
 		return ""
 	}
-
-	if nifStatus(nif) != "active" {
-		return ""
-	}
-
-	name := wifiName(nif)
-	return name
+	return ns.getAirportNetwork(nif)
 }
 
-func nifExists(nif string) bool {
-	cmd := []string{"/sbin/ifconfig", "-l"}
-	out, err := exec.Command(cmd[0], cmd[1:]...).Output()
-	AssertNoErr(err, "Failed to list network interfaces")
-	nifs := strings.Fields(string(out))
-	return Contains(nif, nifs)
+const networksetupCmd = "/usr/sbin/networksetup"
+
+type networksetup struct{}
+
+func (n *networksetup) getAirportPower(nif string) bool {
+	cmd := exec.Command(networksetupCmd, "-getairportpower", nif)
+	out, err := cmd.Output()
+	AssertNoErr(err, "Failed to obtain airport power status")
+	s := strings.TrimSpace(string(out))
+	log.Debug("getairportpower: %s", s)
+
+	return s == fmt.Sprintf("Wi-Fi Power (%s): On", nif)
 }
 
-func nifStatus(nif string) string {
-	cmd := []string{"/sbin/ifconfig", nif}
-	out, err := exec.Command(cmd[0], cmd[1:]...).Output()
-	AssertNoErr(err, "Failed to obtain network interface status")
-	lines := strings.Split(string(out), "\n")
-	for _, line := range lines {
-		kv := strings.Fields(line)
-		if len(kv) >= 2 && kv[0] == "status:" {
-			name := strings.Join(kv[1:], " ")
-			return name
-		}
+func (n *networksetup) getAirportNetwork(nif string) string {
+	cmd := exec.Command(networksetupCmd, "-getairportnetwork", nif)
+	out, err := cmd.Output()
+	AssertNoErr(err, "Failed to obtain airport power status")
+	s := strings.TrimSpace(string(out))
+	log.Debug("getairportnetwork: %s", s)
+
+	p := regexp.MustCompile(`Current Wi-Fi Network: (.+)`)
+	if m := p.FindStringSubmatch(s); m != nil {
+		return string(m[1])
 	}
 	return ""
-}
-
-func wifiName(nif string) string {
-	cmd := []string{"/usr/sbin/networksetup", "-getairportnetwork", nif}
-	out, err := exec.Command(cmd[0], cmd[1:]...).Output()
-	AssertNoErr(err, "Failed to obtain airport network")
-	parts := strings.Fields(string(out))
-	Assert(len(parts) >= 4, fmt.Sprintf("Failed to parse WiFi name: %v", parts))
-	name := strings.Join(parts[3:], " ")
-	return name
 }
