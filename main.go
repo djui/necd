@@ -76,7 +76,10 @@ func runLoop() {
 func notifyOnChange(nif string, interval int) <-chan (string) {
 	previousName := NetworkName(nif)
 	c := make(chan string, 1)
-	c <- previousName
+
+	if previousName != "" {
+		c <- previousName
+	}
 
 	go func() {
 		for _ = range time.Tick(time.Duration(interval) * time.Second) {
