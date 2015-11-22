@@ -18,14 +18,11 @@ int setBrightness(float v) {
   for (CGDisplayCount i = 0; i < numDisplays; ++i) {
     CGDirectDisplayID dspy = display[i];
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     CFDictionaryRef originalMode = CGDisplayCurrentMode(dspy);
     if (originalMode == NULL)
       continue;
 
     io_service_t service = CGDisplayIOServicePort(dspy);
-#pragma GCC diagnostic pop
 
     err = IODisplaySetFloatParameter(service, kNilOptions, kDisplayBrightness, v);
     if (err != kIOReturnSuccess) {

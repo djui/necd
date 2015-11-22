@@ -2,6 +2,7 @@ package main
 
 import (
 	// #cgo LDFLAGS: -framework IOKit -framework ApplicationServices
+	// #cgo CFLAGS: -Wno-deprecated
 	// #include "brightness_darwin.h"
 	//
 	// #cgo LDFLAGS: -framework AudioToolbox
