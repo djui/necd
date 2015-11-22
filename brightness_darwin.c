@@ -26,7 +26,7 @@ int setBrightness(float v) {
 
     err = IODisplaySetFloatParameter(service, kNilOptions, kDisplayBrightness, v);
     if (err != kIOReturnSuccess) {
-      fprintf(stderr, "ERROR: Failed to set brightness of display 0x%x (error %d)", (unsigned int)dspy, err);
+      fprintf(stderr, "ERROR: Failed to set brightness of display 0x%x (error %d)\n", (unsigned int)dspy, err);
       return 2;
     }
   }

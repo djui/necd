@@ -4,7 +4,7 @@
 // Courtesy: https://gist.github.com/atr000/205140
 int setVolume(float newVolume) {
   if (newVolume < 0.0 || newVolume > 1.0) {
-    fprintf(stderr, "ERROR: Requested volume out of range (%.2f)", newVolume);
+    fprintf(stderr, "ERROR: Requested volume out of range (%.2f)\n", newVolume);
     return 1;
   }
 
@@ -24,12 +24,12 @@ int setVolume(float newVolume) {
   AudioDeviceID outputDeviceID = defaultOutputDeviceID();
 
   if (outputDeviceID == kAudioObjectUnknown) {
-    fprintf(stderr, "ERROR: Unknown device");
+    fprintf(stderr, "ERROR: Unknown device\n");
     return 2;
   }
 
   if (!AudioHardwareServiceHasProperty(outputDeviceID, &propertyAOPA)) {
-    fprintf(stderr, "ERROR: Device 0x%0x does not support volume control", outputDeviceID);
+    fprintf(stderr, "ERROR: Device 0x%0x does not support volume control\n", outputDeviceID);
     return 3;
   }
 
@@ -37,7 +37,7 @@ int setVolume(float newVolume) {
   status = AudioHardwareServiceIsPropertySettable(outputDeviceID, &propertyAOPA, &canSetVolume);
 
   if (status || !canSetVolume) {
-    fprintf(stderr, "ERROR: Device 0x%0x does not support volume control", outputDeviceID);
+    fprintf(stderr, "ERROR: Device 0x%0x does not support volume control\n", outputDeviceID);
     return 4;
   }
 
@@ -50,7 +50,7 @@ int setVolume(float newVolume) {
     status = AudioHardwareServiceSetPropertyData(outputDeviceID, &propertyAOPA, 0, NULL, propertySize, &newVolume);
 
     if (status) {
-      fprintf(stderr, "ERROR: Unable to set volume for device 0x%0x", outputDeviceID);
+      fprintf(stderr, "ERROR: Unable to set volume for device 0x%0x\n", outputDeviceID);
       return 5;
     }
 
@@ -60,7 +60,7 @@ int setVolume(float newVolume) {
     UInt32 mute = 0;
 
     if (!AudioHardwareServiceHasProperty(outputDeviceID, &propertyAOPA)) {
-      fprintf(stderr, "ERROR: Device 0x%0x does not support muting", outputDeviceID);
+      fprintf(stderr, "ERROR: Device 0x%0x does not support muting\n", outputDeviceID);
       return 6;
     }
 
@@ -69,7 +69,7 @@ int setVolume(float newVolume) {
     status = AudioHardwareServiceIsPropertySettable(outputDeviceID, &propertyAOPA, &canSetMute);
 
     if (status || !canSetMute) {
-      fprintf(stderr, "ERROR: Device 0x%0x does not support muting", outputDeviceID);
+      fprintf(stderr, "ERROR: Device 0x%0x does not support muting\n", outputDeviceID);
       return 7;
     }
 
@@ -77,7 +77,7 @@ int setVolume(float newVolume) {
   }
 
   if (status) {
-    fprintf(stderr, "ERROR: Unable to set volume for device 0x%0x", outputDeviceID);
+    fprintf(stderr, "ERROR: Unable to set volume for device 0x%0x\n", outputDeviceID);
     return 8;
   }
 
@@ -96,7 +96,7 @@ AudioDeviceID defaultOutputDeviceID() {
   propertyAOPA.mSelector = kAudioHardwarePropertyDefaultOutputDevice;
 
   if (!AudioHardwareServiceHasProperty(kAudioObjectSystemObject, &propertyAOPA)) {
-    fprintf(stderr, "ERROR: Cannot find default output device!");
+    fprintf(stderr, "ERROR: Cannot find default output device!\n");
     return outputDeviceID;
   }
 
@@ -104,7 +104,7 @@ AudioDeviceID defaultOutputDeviceID() {
 
   status = AudioHardwareServiceGetPropertyData(kAudioObjectSystemObject, &propertyAOPA, 0, NULL, &propertySize, &outputDeviceID);
   if (status) {
-    fprintf(stderr, "ERROR: Cannot find default output device!");
+    fprintf(stderr, "ERROR: Cannot find default output device!\n");
   }
   
   return outputDeviceID;
