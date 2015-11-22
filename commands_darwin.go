@@ -2,7 +2,7 @@ package main
 
 import (
 	// #cgo LDFLAGS: -framework IOKit -framework ApplicationServices
-	// #include "brightness.h"
+	// #include "brightness_darwin.h"
 	"C"
 	"fmt"
 	"math"
@@ -26,7 +26,9 @@ func SetBrightness(vNorm float64) {
 	v := C.float(constrain(vNorm, 0, 1))
 	log.Debug("Setting brightness to %v (%v)", vNorm, v)
 
-	C.set_brightness(v)
+	if res := C.setBrightness(v); int(res) != 0 {
+		log.Fatalf("Failed to set brightness: %d", res)
+	}
 }
 
 func constrain(v float64, min float64, max float64) float64 {
