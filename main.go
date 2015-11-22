@@ -82,7 +82,7 @@ func notifyOnChange(nif string, interval int) <-chan (string) {
 		for _ = range time.Tick(time.Duration(interval) * time.Second) {
 			currentName := NetworkName(nif)
 			log.Debug("Current name: %s", currentName)
-			if previousName != currentName {
+			if previousName != currentName && currentName != "" {
 				previousName = currentName
 				c <- currentName
 			}
