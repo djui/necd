@@ -3,7 +3,7 @@
 const int kMaxDisplays = 16;
 const CFStringRef kDisplayBrightness = CFSTR(kIODisplayBrightnessKey);
 
-// Courtesy: https://distfiles.macports.org/brightness/brightness.c
+// Courtesy: https://github.com/nriley/brightness/blob/master/brightness.c
 int setBrightness(float v) {
   CGDirectDisplayID display[kMaxDisplays];
   CGDisplayCount numDisplays;
