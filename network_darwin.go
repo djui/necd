@@ -1,47 +1,43 @@
 package main
 
 import (
-	"fmt"
-	"os/exec"
-	"regexp"
-	"strings"
+	// #cgo CFLAGS: -x objective-c
+	// #cgo LDFLAGS: -fobjc-arc -framework CoreWLAN
+	// #include "wifi_darwin.h"
+	"C"
 
 	"github.com/ian-kent/go-log/log"
 )
 
 // NetworkName returns the SSID of the wifi network.
 func NetworkName(nif string) string {
-	ns := new(networksetup)
-	if !ns.getAirportPower(nif) {
+	if nif == "" {
+		nif = C.GoString(C.guessWifiInterfaceName())
+	}
+
+	if nif == "" {
+		log.Debug("Could not find Wi-Fi network interface")
 		return ""
 	}
-	return ns.getAirportNetwork(nif)
-}
 
-const networksetupCmd = "/usr/sbin/networksetup"
+	active := C.getWifiActive(C.CString(nif))
+	powerOn := C.getWifiPowerOn(C.CString(nif))
 
-type networksetup struct{}
-
-func (n *networksetup) getAirportPower(nif string) bool {
-	cmd := exec.Command(networksetupCmd, "-getairportpower", nif)
-	out, err := cmd.Output()
-	AssertNoErr(err, "Failed to obtain airport power status")
-	s := strings.TrimSpace(string(out))
-	log.Debug("getairportpower: %s", s)
-
-	return s == fmt.Sprintf("Wi-Fi Power (%s): On", nif)
-}
-
-func (n *networksetup) getAirportNetwork(nif string) string {
-	cmd := exec.Command(networksetupCmd, "-getairportnetwork", nif)
-	out, err := cmd.Output()
-	AssertNoErr(err, "Failed to obtain airport power status")
-	s := strings.TrimSpace(string(out))
-	log.Debug("getairportnetwork: %s", s)
-
-	p := regexp.MustCompile(`Current Wi-Fi Network: (.+)`)
-	if m := p.FindStringSubmatch(s); m != nil {
-		return string(m[1])
+	if !active {
+		log.Debug("Wi-Fi network interface is not active")
+		return ""
 	}
-	return ""
+
+	if !powerOn {
+		log.Debug("Wi-Fi network interface is not powered on")
+		return ""
+	}
+
+	ssid := C.GoString(C.getWifiSSID(C.CString(nif)))
+
+	if ssid == "" {
+		log.Error("Wi-Fi network interface ssid empty")
+	}
+
+	return ssid
 }
