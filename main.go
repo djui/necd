@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strconv"
 	"time"
 
 	"golang.org/x/crypto/ssh/terminal"
@@ -58,8 +59,9 @@ func runLoop() {
 	log.Debug("Global conf: %#v", conf)
 
 	nif := conf["config"]["if"]
+	interval := atoi(conf["config"]["interval"], 5)
 
-	for name := range notifyOnChange(nif) {
+	for name := range notifyOnChange(nif, interval) {
 		log.Info("Network changed: %s", name)
 
 		if section, ok := conf["ssid:"+name]; ok {
@@ -71,13 +73,13 @@ func runLoop() {
 	}
 }
 
-func notifyOnChange(nif string) <-chan (string) {
+func notifyOnChange(nif string, interval int) <-chan (string) {
 	previousName := NetworkName(nif)
 	c := make(chan string, 1)
 	c <- previousName
 
 	go func() {
-		for _ = range time.Tick(5 * time.Second) {
+		for _ = range time.Tick(time.Duration(interval) * time.Second) {
 			currentName := NetworkName(nif)
 			log.Debug("Current name: %s", currentName)
 			if previousName != currentName {
@@ -88,4 +90,15 @@ func notifyOnChange(nif string) <-chan (string) {
 	}()
 
 	return c
+}
+
+func atoi(a string, def int) int {
+	if a == "" {
+		return def
+	}
+	i, err := strconv.Atoi(a)
+	if err != nil {
+		log.Fatalf("Failed to parse value: %s", a)
+	}
+	return i
 }
