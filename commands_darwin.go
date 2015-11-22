@@ -3,22 +3,24 @@ package main
 import (
 	// #cgo LDFLAGS: -framework IOKit -framework ApplicationServices
 	// #include "brightness_darwin.h"
+	//
+	// #cgo LDFLAGS: -framework AudioToolbox
+	// #cgo CFLAGS: -Wno-deprecated -Wno-nonnull
+	// #include "volume_darwin.h"
 	"C"
-	"fmt"
 	"math"
-	"os/exec"
 
 	"github.com/ian-kent/go-log/log"
 )
 
 // SetVolume takes a float value between [0,1] and sets the global output volume.
 func SetVolume(vNorm float64) {
-	v := 7 * constrain(vNorm, 0, 1)
+	v := C.float(constrain(vNorm, 0, 1))
 	log.Debug("Setting volume to %v (%v)", vNorm, v)
 
-	cmd := []string{"/usr/bin/osascript", "-e", fmt.Sprintf("set volume %f", v)}
-	out, err := exec.Command(cmd[0], cmd[1:]...).CombinedOutput()
-	AssertNoErr(err, fmt.Sprintf("Failed execute cmd: %v: %s", cmd, string(out)))
+	if res := C.setVolume(v); int(res) != 0 {
+		log.Fatalf("Failed to set volume: %d", res)
+	}
 }
 
 // SetBrightness takes a float value betweem [0,1] and sets the global screen brightness.
